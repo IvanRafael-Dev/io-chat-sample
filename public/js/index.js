@@ -12,8 +12,8 @@ socket.on('newMessage', (message) => {
 });
 
 socket.emit('createMessage', {
-    from: 'Lula',
-    text: '2022 to ai!'
+    from: 'Carl Sagan',
+    text: 'We are all made of stardusts'
 }, (data) => {
   console.log(`${data} got it!`)
 });
