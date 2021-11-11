@@ -21,7 +21,7 @@ socket.on('newLocationMessage', (message) => {
   a.setAttribute('target', '_blank');
   a.setAttribute('href', message.url);
   li.innerText = `${message.from}: `;
-  a.innerText = 'location';
+  a.innerHTML = 'My current location';
   li.appendChild(a);
   document.querySelector('body').appendChild(li);
 })
@@ -35,6 +35,7 @@ document.querySelector('#submit-btn').addEventListener('click', (e) => {
   }, (data) => {
     console.log(`${data} got it!`)
   });
+  document.querySelector('input[name=message]').value = '';
 });
 
 document.querySelector('#send-location-btn').addEventListener('click', () => {
