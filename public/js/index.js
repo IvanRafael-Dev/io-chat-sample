@@ -8,22 +8,30 @@ socket.on('disconnect', () => {
 });
 
 socket.on('newMessage', (message) => {
-  console.log('New message', message);
-  const li = document.createElement('li')
-  li.innerText = `${message.from}: ${message.text}`;
-  document.querySelector('body').appendChild(li);
+  const template = document.querySelector('#message-template').innerHTML;
+  const msgFormattedTime = moment(message.createdAt).format('HH:mm');
+  const html = Mustache.render(template, {
+    from: message.from,
+    text: message.text,
+    createdAt: msgFormattedTime
+  });
+  console.log(html);
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  document.querySelector('#messages').appendChild(div);
 });
 
 socket.on('newLocationMessage', (message) => {
-  console.log('New location message', message);
-  const li = document.createElement('li');
-  const a = document.createElement('a');
-  a.setAttribute('target', '_blank');
-  a.setAttribute('href', message.url);
-  li.innerText = `${message.from}: `;
-  a.innerHTML = 'My current location';
-  li.appendChild(a);
-  document.querySelector('body').appendChild(li);
+  const template = document.querySelector('#message-location-template').innerHTML;
+  const msgFormattedTime = moment(message.createdAt).format('HH:mm');
+  const html = Mustache.render(template, {
+    from: message.from,
+    url: message.url,
+    createdAt: msgFormattedTime
+  });
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  document.querySelector('#messages').appendChild(div);
 })
 
 document.querySelector('#submit-btn').addEventListener('click', (e) => {
