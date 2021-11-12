@@ -1,6 +1,27 @@
 const socket = io();
+
+const scrollToBottom = () => {
+  const messages = document.querySelector('#messages');
+  const newMessage = messages.lastElementChild;
+  newMessage.scrollIntoView();
+};
+
 socket.on('connect', () => {
-  console.log('Connected to server');
+  const params = JSON
+    .parse('{"' + decodeURI(location.search.substring(1))
+      .replace(/&/g, '","')
+      .replace(/\+/g, ' ')
+      .replace(/=/g, '":"') +'"}');
+  console.log(params);
+
+  socket.emit('join', params, (err) => {
+    if (err) {
+      alert('input fields must be valid');
+      location.href = '/';
+    } else {
+      console.log('No error');
+    }
+  });
   
 });
 socket.on('disconnect', () => {
@@ -15,10 +36,10 @@ socket.on('newMessage', (message) => {
     text: message.text,
     createdAt: msgFormattedTime
   });
-  console.log(html);
   const div = document.createElement('div');
   div.innerHTML = html;
   document.querySelector('#messages').appendChild(div);
+  scrollToBottom();
 });
 
 socket.on('newLocationMessage', (message) => {
@@ -32,6 +53,7 @@ socket.on('newLocationMessage', (message) => {
   const div = document.createElement('div');
   div.innerHTML = html;
   document.querySelector('#messages').appendChild(div);
+  scrollToBottom();
 })
 
 document.querySelector('#submit-btn').addEventListener('click', (e) => {
