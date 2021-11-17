@@ -12,11 +12,10 @@ socket.on('connect', () => {
       .replace(/&/g, '","')
       .replace(/\+/g, ' ')
       .replace(/=/g, '":"') +'"}');
-  console.log(params);
-
+  
   socket.emit('join', params, (err) => {
     if (err) {
-      alert('input fields must be valid');
+      alert(err);
       location.href = '/';
     } else {
       console.log('No error');

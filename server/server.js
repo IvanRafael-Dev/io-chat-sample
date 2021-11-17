@@ -4,6 +4,7 @@ const path = require('path');
 
 const { generateMessage, generateLocationMessage } = require('./utils/message');
 const socketIO = require('socket.io');
+const { isString } = require('./utils/isString');
 
 const PORT = process.env.PORT || 3000;
 
@@ -16,12 +17,19 @@ app.use(express.static(publicPath));
 
 io.on('connection', (socket) => {
   console.log('New user connected');
-
-  socket.emit('newMessage', generateMessage('Server', 'Welcome to the chat app'));
-  socket.broadcast.emit('newMessage', generateMessage('Server', 'New user joined'));
-
+  
   socket.on('join', (params, callback) => {
-    
+    if (!isString(params.name) || !isString(params.room)) {
+      return callback('Name and room are required');
+    }
+
+    socket.join(params.room);
+
+    socket.emit('newMessage', generateMessage('Server', `Welcome to ${params.room}!`));
+
+    socket.broadcast.to(params.room).emit('newMessage', generateMessage('Server', `New user has joined!`));
+
+    callback();
   });
 
   socket.on('createMessage', (message, cb) => {
