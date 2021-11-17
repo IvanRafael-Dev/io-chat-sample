@@ -7,7 +7,20 @@ const scrollToBottom = () => {
 };
 
 socket.on('connect', () => {
-  console.log('Connected to server');
+  const params = JSON
+    .parse('{"' + decodeURI(location.search.substring(1))
+      .replace(/&/g, '","')
+      .replace(/\+/g, ' ')
+      .replace(/=/g, '":"') +'"}');
+  
+  socket.emit('join', params, (err) => {
+    if (err) {
+      alert(err);
+      location.href = '/';
+    } else {
+      console.log('No error');
+    }
+  });
   
 });
 socket.on('disconnect', () => {
@@ -22,7 +35,6 @@ socket.on('newMessage', (message) => {
     text: message.text,
     createdAt: msgFormattedTime
   });
-  console.log(html);
   const div = document.createElement('div');
   div.innerHTML = html;
   document.querySelector('#messages').appendChild(div);
