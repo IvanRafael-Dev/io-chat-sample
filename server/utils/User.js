@@ -1,9 +1,3 @@
-// [{
-//   id: 'lskjdnfs',
-//   name: 'John Doe',
-//   room: 'NodeJS'
-// }]
-
 class User {
   constructor() {
     this.users = [];
@@ -18,7 +12,7 @@ class User {
   getUserList(room) {
     const users = this.users.filter(user => user.room === room);
     const namesArray = users.map(user => user.name);
-
+    console.log(namesArray);
     return namesArray;
   }
 

@@ -1,5 +1,19 @@
 const socket = io();
 
+const makeNoise = () => {
+  const a = new AudioContext();
+  const o = a.createOscillator();
+  const g = a.createGain();
+  o.connect(g);
+  o.frequency.value = 440;
+  o.detune.value = 1000;
+  g.connect(a.destination);
+  g.gain.value = 0.02;
+  o.start();
+  o.stop(a.currentTime + 0.005);
+  console.log('chamado');
+}
+
 const scrollToBottom = () => {
   const messages = document.querySelector('#messages');
   const newMessage = messages.lastElementChild;
@@ -20,11 +34,24 @@ socket.on('connect', () => {
     } else {
       console.log('No error');
     }
-  });
-  
+  });  
 });
+
 socket.on('disconnect', () => {
   console.log('Disconnected from server');
+});
+
+socket.on('updateUserList', (users) => {
+  console.log(users);
+  const ol = document.createElement('ol');
+  users.forEach((user) => {
+    const li = document.createElement('li');
+    li.innerHTML = user;
+    ol.appendChild(li);
+  });
+  document.querySelector('#users').innerHTML = '';
+  document.querySelector('#users').appendChild(ol);
+
 });
 
 socket.on('newMessage', (message) => {
@@ -39,6 +66,7 @@ socket.on('newMessage', (message) => {
   div.innerHTML = html;
   document.querySelector('#messages').appendChild(div);
   scrollToBottom();
+  makeNoise();
 });
 
 socket.on('newLocationMessage', (message) => {
@@ -53,13 +81,13 @@ socket.on('newLocationMessage', (message) => {
   div.innerHTML = html;
   document.querySelector('#messages').appendChild(div);
   scrollToBottom();
+  makeNoise();
 })
 
 document.querySelector('#submit-btn').addEventListener('click', (e) => {
   e.preventDefault();
   const message = document.querySelector('input[name=message]').value;
   socket.emit('createMessage', {
-    from: 'User',
     text: message
   }, (data) => {
     console.log(`${data} got it!`)
